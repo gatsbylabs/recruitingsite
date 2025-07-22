@@ -45,7 +45,7 @@ export default function Home() {
               SYSTEM INITIALIZATION...
             </h1>
             <div className="space-y-2 text-terminal-dim">
-              <p className="cursor">LOADING RECRUITMENT MODULE</p>
+              <p className="cursor">LOADING GATSBY RECRUITMENT MODULE</p>
               <p>SECURITY CLEARANCE REQUIRED</p>
               <p>PREPARE FOR EVALUATION</p>
             </div>
@@ -62,7 +62,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-terminal-bright mb-2">
-                RECRUITMENT TERMINAL v1.0
+                GATSBY ENGINEERING ENLISTMENT TERMINAL v1.0
               </h1>
               <p className="text-terminal-dim">
                 Complete all challenges to access job listings
