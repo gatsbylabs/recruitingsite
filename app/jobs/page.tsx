@@ -238,7 +238,7 @@ export default function Jobs() {
                     <p className="mb-3">
                       We are Gatsby - a dynamic venture-backed startup passionate about enabling 
                       organizations to connect and build relationships in the real world. Our mission 
-                      is enabling organizations to grow their network through amazing events.
+                      is to help organizations grow their network through amazing events.
                     </p>
                     <p>
                       Our flagship product is{" "}
