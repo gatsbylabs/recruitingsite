@@ -38,6 +38,25 @@ export default function CompletionGraph({ challengeIndex, userTime }: Completion
     );
   }
 
+  // If only one data point, show it as a simple label
+  if (times.length === 1) {
+    return (
+      <div className="border border-terminal-dim p-4 bg-terminal-bg/50">
+        <div className="text-terminal-accent text-sm mb-2">
+          COMPLETION TIME
+        </div>
+        <div className="text-terminal-fg text-2xl font-mono">
+          {times[0]}s
+        </div>
+        {userTime === times[0] && (
+          <div className="mt-2 text-sm text-terminal-bright">
+            YOUR TIME
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Sort times and count occurrences
   const timeCount = new Map<number, number>();
   times.forEach(time => {

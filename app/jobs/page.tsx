@@ -192,7 +192,7 @@ export default function Jobs() {
           transition={{ delay: 0.6 }}
           className="mt-12 text-center text-terminal-dim"
         >
-          <p>TERMINAL CORP © 2024</p>
+          <p>GATSBY EVENTS © 2025</p>
           <p className="mt-2">WE BUILD THE FUTURE</p>
         </motion.div>
       </div>
