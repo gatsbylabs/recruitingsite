@@ -38,8 +38,19 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]"
+          className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] relative"
         >
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.location.href = "/jobs"}
+            className="absolute top-8 right-8 px-4 py-2 border border-terminal-accent text-terminal-accent hover:bg-terminal-accent hover:text-black transition-colors font-mono text-sm"
+          >
+            SKIP CHALLENGES
+          </motion.button>
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-8 text-terminal-bright typewriter">
               SYSTEM INITIALIZATION...
@@ -61,12 +72,26 @@ export default function Home() {
         >
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-terminal-bright mb-2">
-                GATSBY ENGINEERING ENLISTMENT TERMINAL v1.0
-              </h1>
-              <p className="text-terminal-dim">
-                Complete all challenges to access job listings
-              </p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-3xl font-bold text-terminal-bright mb-2">
+                    GATSBY ENGINEERING ENLISTMENT TERMINAL v1.0
+                  </h1>
+                  <p className="text-terminal-dim">
+                    Complete all challenges to access job listings
+                  </p>
+                </div>
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = "/jobs"}
+                  className="px-4 py-2 border border-terminal-accent text-terminal-accent hover:bg-terminal-accent hover:text-black transition-colors font-mono text-sm"
+                >
+                  SKIP CHALLENGES
+                </motion.button>
+              </div>
               <div className="mt-4 flex gap-2">
                 {[0, 1, 2].map((i) => (
                   <div

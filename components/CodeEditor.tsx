@@ -143,7 +143,7 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
             <p className="text-terminal-dim mb-4">{challenge.description}</p>
             <div className="text-sm text-terminal-accent">
               <p>FUNCTION SIGNATURE:</p>
-              <pre className="mt-2 text-terminal-fg">{challenge.signature}</pre>
+              <pre className="mt-2 text-terminal-fg whitespace-pre-wrap break-all">{challenge.signature}</pre>
             </div>
           </div>
 

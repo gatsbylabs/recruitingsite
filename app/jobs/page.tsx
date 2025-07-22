@@ -159,6 +159,21 @@ export default function Jobs() {
                       </ul>
                     </div>
 
+                    <div className="mb-6 p-4 border border-terminal-accent bg-terminal-accent/10">
+                      <h3 className="text-terminal-bright font-bold mb-2">
+                        HOW TO APPLY:
+                      </h3>
+                      <p className="text-terminal-fg mb-2">
+                        Email your resume and specify which position you're interested in to:
+                      </p>
+                      <a 
+                        href="mailto:eng@gatsby.events"
+                        className="text-terminal-bright font-mono hover:text-terminal-accent transition-colors underline"
+                      >
+                        eng@gatsby.events
+                      </a>
+                    </div>
+
                     {showApply && (
                       <motion.div
                         initial={{ opacity: 0 }}
