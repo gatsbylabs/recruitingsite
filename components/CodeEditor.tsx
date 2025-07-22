@@ -160,7 +160,7 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
             options={{
               minimap: { enabled: false },
               fontSize: 14,
-              fontFamily: "Golos Text, monospace",
+              fontFamily: "monospace",
               lineNumbers: "on",
               scrollBeyondLastLine: false,
               automaticLayout: true,
