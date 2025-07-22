@@ -164,7 +164,7 @@ export default function Jobs() {
                         HOW TO APPLY:
                       </h3>
                       <p className="text-terminal-fg mb-2">
-                        Email your resume and specify which position you're interested in to:
+                        Email your resume and specify which position you&apos;re interested in to:
                       </p>
                       <a 
                         href="mailto:eng@gatsby.events"
