@@ -72,7 +72,7 @@ export default function CompletionGraph({ challengeIndex, userTime }: Completion
   const displayMax = Math.ceil(max + padding);
   const displayRange = displayMax - displayMin;
   
-  const maxCount = Math.max(...timeCount.values());
+  const maxCount = Math.max(...Array.from(timeCount.values()));
   const yAxisMax = Math.ceil(maxCount * 1.1);
   
   // Generate integer y-axis labels
