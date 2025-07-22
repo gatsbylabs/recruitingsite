@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 
 const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
@@ -9,18 +9,21 @@ const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
 });
 
 export default function Home() {
-  const [showTerminal, setShowTerminal] = useState(true);
+  const [showLandingOverlay, setShowLandingOverlay] = useState(true);
+  const [showTerminal, setShowTerminal] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowTerminal(false);
-      setShowEditor(true);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (showTerminal) {
+      const timer = setTimeout(() => {
+        setShowTerminal(false);
+        setShowEditor(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showTerminal]);
 
   const handleChallengeComplete = (challengeIndex: number) => {
     setCompletedChallenges([...completedChallenges, challengeIndex]);
@@ -31,8 +34,57 @@ export default function Home() {
     }
   };
 
+  const handleYes = () => {
+    setShowLandingOverlay(false);
+    setShowTerminal(true);
+  };
+
+  const handleNo = () => {
+    window.location.href = "https://www.google.com/about/careers/applications/";
+  };
+
   return (
     <main className="min-h-screen p-8 terminal-flicker">
+      <AnimatePresence>
+        {showLandingOverlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-terminal-bg z-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-center"
+            >
+              <h1 className="text-4xl font-bold text-terminal-bright mb-12">
+                DO YOU HAVE WHAT IT TAKES?
+              </h1>
+              <div className="flex gap-8 justify-center">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleYes}
+                  className="px-12 py-4 border-2 border-terminal-bright text-terminal-bright hover:bg-terminal-bright hover:text-terminal-bg transition-all text-2xl font-bold"
+                >
+                  YES
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleNo}
+                  className="px-12 py-4 border-2 border-terminal-dim text-terminal-dim hover:border-terminal-accent hover:text-terminal-accent transition-all text-2xl font-bold"
+                >
+                  NO
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {showTerminal && (
         <motion.div
           initial={{ opacity: 0 }}

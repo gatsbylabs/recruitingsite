@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import CompletionGraph from "@/components/CompletionGraph";
 import { challenges } from "@/lib/challenges";
 
@@ -53,6 +53,7 @@ const jobs = [
 export default function Jobs() {
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
   const [showApply, setShowApply] = useState(false);
+  const [showAbout, setShowAbout] = useState(true);
 
   return (
     <main className="min-h-screen p-8 terminal-flicker">
@@ -200,6 +201,129 @@ export default function Jobs() {
             </motion.div>
           ))}
         </div>
+
+        {/* About Gatsby Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-12"
+        >
+          <button
+            onClick={() => setShowAbout(!showAbout)}
+            className="w-full p-4 border border-terminal-dim hover:border-terminal-accent transition-colors text-left"
+          >
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-terminal-accent">
+                ABOUT GATSBY
+              </h2>
+              <span className="text-terminal-dim text-2xl">
+                {showAbout ? "−" : "+"}
+              </span>
+            </div>
+          </button>
+          
+          <AnimatePresence>
+            {showAbout && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="border border-t-0 border-terminal-dim p-6 space-y-6 text-terminal-fg">
+                  <div>
+                    <h3 className="text-terminal-bright font-bold mb-3">ABOUT US</h3>
+                    <p className="mb-3">
+                      We are Gatsby - a dynamic venture-backed startup passionate about enabling 
+                      organizations to connect and build relationships in the real world. Our mission 
+                      is enabling organizations to grow their network through amazing events.
+                    </p>
+                    <p>
+                      Our flagship product is{" "}
+                      <a 
+                        href="https://gatsby.events/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        Gatsby Events
+                      </a>
+                      {" "}— a B2B Events platform.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-terminal-bright font-bold mb-3">OUR STORY</h3>
+                    <p className="mb-3">
+                      Gatsby started as a small team spun out of{" "}
+                      <a 
+                        href="https://8vc.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        8VC
+                      </a>
+                      {" "}in early 2020, and today, has a stable B2B 
+                      SaaS product looking to 10x.
+                    </p>
+                    <p>
+                      Close engagement with{" "}
+                      <a 
+                        href="https://8vc.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        8VC
+                      </a>
+                      {" "}and{" "}
+                      <a 
+                        href="https://www.pear.vc/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        Pear VC
+                      </a>
+                      {" "}provides us with the best possible ingredients for success in our mission. 
+                      Our Board of Directors includes repeat founder{" "}
+                      <a 
+                        href="https://8vc.com/team/joe-lonsdale/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        Joe Lonsdale
+                      </a>
+                      {" "}who built companies like{" "}
+                      <a 
+                        href="https://www.palantir.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        Palantir
+                      </a>
+                      ,{" "}
+                      <a 
+                        href="https://addepar.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-terminal-bright hover:text-terminal-accent underline"
+                      >
+                        Addepar
+                      </a>
+                      , and many more.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
