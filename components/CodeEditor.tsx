@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { challenges } from "@/lib/challenges";
+import { stripTypeScript } from "@/lib/stripTypes";
+import Timer from "@/components/Timer";
+import CompletionGraph from "@/components/CompletionGraph";
 
 interface CodeEditorProps {
   challengeIndex: number;
@@ -16,14 +19,19 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [startTime] = useState(Date.now());
+  const [completionTime, setCompletionTime] = useState<number | undefined>();
+  const [timerRunning, setTimerRunning] = useState(true);
 
   const runCode = useCallback(async () => {
     setIsRunning(true);
     setOutput("EXECUTING...");
 
     try {
+      // Strip TypeScript types before execution
+      const strippedCode = stripTypeScript(code);
       const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
-      const userFunction = new AsyncFunction('return ' + code)();
+      const userFunction = new AsyncFunction('return ' + strippedCode)();
       const fn = await userFunction;
       
       const results = challenge.tests.map((test, i) => {
@@ -63,7 +71,21 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
 
       if (allPassed) {
         outputText += "\nALL TESTS PASSED! ACCESS GRANTED.";
+        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+        setCompletionTime(timeTaken);
+        setTimerRunning(false);
         setShowSuccess(true);
+        
+        // Save completion time to database
+        fetch('/api/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            challenge_index: challengeIndex,
+            completion_time: timeTaken
+          })
+        });
+        
         setTimeout(() => {
           onComplete();
         }, 2000);
@@ -80,18 +102,28 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
   }, [code, challenge, onComplete]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
-        <div className="border border-terminal-dim p-4 mb-4 bg-terminal-bg">
-          <h2 className="text-xl font-bold text-terminal-bright mb-2">
-            CHALLENGE {challengeIndex + 1}: {challenge.title}
-          </h2>
-          <p className="text-terminal-dim mb-4">{challenge.description}</p>
-          <div className="text-sm text-terminal-accent">
-            <p>FUNCTION SIGNATURE:</p>
-            <pre className="mt-2 text-terminal-fg">{challenge.signature}</pre>
-          </div>
+    <div>
+      <div className="mb-4 flex justify-between items-center">
+        <Timer isRunning={timerRunning} />
+        <div className="text-terminal-dim text-sm">
+          CHALLENGE {challengeIndex + 1} OF {challenges.length}
         </div>
+      </div>
+      
+      <CompletionGraph challengeIndex={challengeIndex} userTime={completionTime} />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div>
+          <div className="border border-terminal-dim p-4 mb-4 bg-terminal-bg">
+            <h2 className="text-xl font-bold text-terminal-bright mb-2">
+              CHALLENGE {challengeIndex + 1}: {challenge.title}
+            </h2>
+            <p className="text-terminal-dim mb-4">{challenge.description}</p>
+            <div className="text-sm text-terminal-accent">
+              <p>FUNCTION SIGNATURE:</p>
+              <pre className="mt-2 text-terminal-fg">{challenge.signature}</pre>
+            </div>
+          </div>
 
         <div className="border border-terminal-dim bg-black/50">
           <div className="border-b border-terminal-dim p-2">
@@ -156,6 +188,7 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 }
