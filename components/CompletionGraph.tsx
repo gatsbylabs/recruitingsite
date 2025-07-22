@@ -38,51 +38,116 @@ export default function CompletionGraph({ challengeIndex, userTime }: Completion
     );
   }
 
-  // Create histogram buckets
-  const min = Math.min(...times);
-  const max = Math.max(...times);
-  const bucketCount = Math.min(20, times.length);
-  const bucketSize = (max - min) / bucketCount || 1;
-  
-  const buckets = Array(bucketCount).fill(0);
+  // Sort times and count occurrences
+  const timeCount = new Map<number, number>();
   times.forEach(time => {
-    const bucketIndex = Math.min(Math.floor((time - min) / bucketSize), bucketCount - 1);
-    buckets[bucketIndex]++;
+    timeCount.set(time, (timeCount.get(time) || 0) + 1);
   });
-
-  const maxCount = Math.max(...buckets);
-  const userBucket = userTime ? Math.min(Math.floor((userTime - min) / bucketSize), bucketCount - 1) : -1;
+  
+  const sortedUniqueTimes = Array.from(timeCount.keys()).sort((a, b) => a - b);
+  const min = sortedUniqueTimes[0];
+  const max = sortedUniqueTimes[sortedUniqueTimes.length - 1];
+  const range = max - min;
+  const padding = range * 0.1;
+  const displayMin = Math.floor(min - padding);
+  const displayMax = Math.ceil(max + padding);
+  const displayRange = displayMax - displayMin;
+  
+  const maxCount = Math.max(...timeCount.values());
+  const yAxisMax = Math.ceil(maxCount * 1.1);
+  
+  // Generate integer y-axis labels
+  const yAxisLabels = [];
+  if (yAxisMax <= 5) {
+    // For small counts, show every integer
+    for (let i = yAxisMax; i >= 0; i--) {
+      yAxisLabels.push(i);
+    }
+  } else {
+    // For larger counts, show 5 evenly spaced integers
+    const step = Math.ceil(yAxisMax / 4);
+    for (let i = 0; i <= 4; i++) {
+      yAxisLabels.unshift(Math.min(i * step, yAxisMax));
+    }
+  }
 
   return (
     <div className="border border-terminal-dim p-4 bg-terminal-bg/50">
-      <div className="text-terminal-accent text-sm mb-2">
+      <div className="text-terminal-accent text-sm mb-4">
         COMPLETION TIME DISTRIBUTION (n={times.length})
       </div>
-      <div className="h-16 flex items-end gap-[2px]">
-        {buckets.map((count, i) => {
-          const height = (count / maxCount) * 100;
-          const isUserBucket = i === userBucket;
-          return (
-            <motion.div
-              key={i}
-              initial={{ height: 0 }}
-              animate={{ height: `${height}%` }}
-              transition={{ delay: i * 0.02 }}
-              className={`flex-1 ${
-                isUserBucket ? "bg-terminal-bright" : "bg-terminal-accent"
-              }`}
-              title={`${(min + i * bucketSize).toFixed(0)}s - ${(min + (i + 1) * bucketSize).toFixed(0)}s: ${count} users`}
-            />
-          );
-        })}
+      
+      <div className="flex gap-4">
+        {/* Y-axis labels */}
+        <div className="flex flex-col justify-between text-xs text-terminal-dim w-8 text-right">
+          {yAxisLabels.map((label, index) => (
+            <span key={index}>{label}</span>
+          ))}
+        </div>
+        
+        {/* Chart area */}
+        <div className="flex-1">
+          <div className="relative h-32">
+            {/* Y-axis grid lines */}
+            {[0, 25, 50, 75, 100].map((percent) => (
+              <div
+                key={percent}
+                className="absolute w-full border-t border-terminal-dim/30"
+                style={{ bottom: `${percent}%` }}
+              />
+            ))}
+            
+            {/* Bars */}
+            <div className="absolute inset-0">
+              {sortedUniqueTimes.map((time, index) => {
+                const count = timeCount.get(time) || 0;
+                const height = yAxisMax > 0 ? (count / yAxisMax) * 100 : 0;
+                const position = ((time - displayMin) / displayRange) * 100;
+                const isUserTime = time === userTime;
+                const barWidth = Math.max(100 / sortedUniqueTimes.length, 3);
+                
+                return (
+                  <motion.div
+                    key={time}
+                    initial={{ height: 0 }}
+                    animate={{ height: `${height}%` }}
+                    transition={{ delay: index * 0.01, duration: 0.3 }}
+                    className={`absolute bottom-0 ${
+                      isUserTime ? "bg-terminal-bright" : "bg-terminal-accent/60"
+                    } hover:opacity-80`}
+                    style={{ 
+                      left: `${position}%`,
+                      width: `${barWidth}px`,
+                      transform: 'translateX(-50%)'
+                    }}
+                    title={`${time}s: ${count} user${count !== 1 ? 's' : ''}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* X-axis labels */}
+          <div className="flex justify-between text-xs text-terminal-dim mt-2">
+            <span>{displayMin}s</span>
+            <span>{Math.floor((displayMin + displayMax) / 2)}s</span>
+            <span>{displayMax}s</span>
+          </div>
+        </div>
       </div>
-      <div className="flex justify-between text-xs text-terminal-dim mt-1">
-        <span>{min.toFixed(0)}s</span>
-        {userTime && (
-          <span className="text-terminal-bright">YOUR TIME: {userTime}s</span>
-        )}
-        <span>{max.toFixed(0)}s</span>
+      
+      {/* Stats */}
+      <div className="mt-4 text-xs text-terminal-dim flex justify-between">
+        <span>FASTEST: {min}s</span>
+        <span>MEDIAN: {times.sort((a, b) => a - b)[Math.floor(times.length / 2)]}s</span>
+        <span>SLOWEST: {max}s</span>
       </div>
+      
+      {userTime && (
+        <div className="mt-2 text-sm text-terminal-bright text-center">
+          YOUR TIME: {userTime}s (FASTER THAN {Math.round((times.filter(t => t > userTime).length / times.length) * 100)}% OF USERS)
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import CompletionGraph from "@/components/CompletionGraph";
+import { challenges } from "@/lib/challenges";
 
 const jobs = [
   {
@@ -66,18 +68,40 @@ export default function Jobs() {
           <p className="text-terminal-dim">
             CONGRATULATIONS. YOU HAVE PROVEN YOUR SKILLS.
           </p>
-          <p className="text-terminal-dim">
+          <p className="text-terminal-dim mb-8">
             SELECT A POSITION TO VIEW DETAILS.
           </p>
+          
+          <div className="space-y-6 mt-8">
+            <h2 className="text-2xl font-bold text-terminal-accent">
+              CHALLENGE STATISTICS
+            </h2>
+            {challenges.map((challenge, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <h3 className="text-terminal-bright mb-2">
+                  {challenge.title}
+                </h3>
+                <CompletionGraph challengeIndex={index} />
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 mt-12">
+          <h2 className="text-2xl font-bold text-terminal-accent">
+            OPEN POSITIONS
+          </h2>
           {jobs.map((job, index) => (
             <motion.div
               key={job.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.2 }}
+              transition={{ delay: 0.3 + index * 0.2 }}
             >
               <div
                 className={`border p-6 cursor-pointer transition-all ${
