@@ -19,9 +19,19 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [startTime] = useState(Date.now());
+  const [startTime, setStartTime] = useState(Date.now());
   const [completionTime, setCompletionTime] = useState<number | undefined>();
   const [timerRunning, setTimerRunning] = useState(true);
+
+  // Reset state when challenge changes
+  useEffect(() => {
+    setCode(challenge.starterCode);
+    setOutput("");
+    setShowSuccess(false);
+    setStartTime(Date.now());
+    setCompletionTime(undefined);
+    setTimerRunning(true);
+  }, [challengeIndex, challenge.starterCode]);
 
   const runCode = useCallback(async () => {
     setIsRunning(true);
