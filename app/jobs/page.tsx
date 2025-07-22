@@ -175,7 +175,7 @@ export default function Jobs() {
                           eng@gatsby.events
                         </p>
                         <p className="text-terminal-dim text-sm mt-2">
-                          Include "TERMINAL-{job.id.toUpperCase()}" in the subject line
+                          Include &quot;TERMINAL-{job.id.toUpperCase()}&quot; in the subject line
                         </p>
                       </motion.div>
                     )}
