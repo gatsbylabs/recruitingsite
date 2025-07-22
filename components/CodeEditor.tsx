@@ -46,9 +46,11 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
       const userFunction = new AsyncFunction('return ' + strippedCode)();
       const fn = await userFunction;
       
-      const results = challenge.tests.map((test, i) => {
+      const results = await Promise.all(challenge.tests.map(async(test, i) => {
         try {
-          const result = fn(...test.input);
+          const result = await fn(...test.input);
+          console.log('result', result);
+          console.log('test.expected', test.expected);
           const passed = JSON.stringify(result) === JSON.stringify(test.expected);
           return {
             testNum: i + 1,
@@ -66,7 +68,7 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
             actual: `ERROR: ${e}`,
           };
         }
-      });
+      }));
 
       const allPassed = results.every(r => r.passed);
       

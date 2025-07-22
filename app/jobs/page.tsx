@@ -87,7 +87,6 @@ export default function Jobs() {
                 }`}
                 onClick={() => {
                   setSelectedJob(job.id);
-                  setShowApply(false);
                 }}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -136,16 +135,6 @@ export default function Jobs() {
                       </ul>
                     </div>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowApply(true);
-                      }}
-                      className="w-full py-3 border border-terminal-bright text-terminal-bright hover:bg-terminal-bright hover:text-terminal-bg transition-colors"
-                    >
-                      APPLY FOR POSITION
-                    </button>
-
                     {showApply && (
                       <motion.div
                         initial={{ opacity: 0 }}
@@ -159,7 +148,7 @@ export default function Jobs() {
                           Send your resume and a link to your best work to:
                         </p>
                         <p className="text-terminal-bright font-mono mt-2">
-                          careers@terminal-corp.dev
+                          eng@gatsby.events
                         </p>
                         <p className="text-terminal-dim text-sm mt-2">
                           Include "TERMINAL-{job.id.toUpperCase()}" in the subject line
