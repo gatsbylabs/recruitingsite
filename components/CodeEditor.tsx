@@ -22,6 +22,7 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
   const [startTime, setStartTime] = useState(Date.now());
   const [completionTime, setCompletionTime] = useState<number | undefined>();
   const [timerRunning, setTimerRunning] = useState(true);
+  const [showGiveUpConfirm, setShowGiveUpConfirm] = useState(false);
 
   // Reset state when challenge changes
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
     setStartTime(Date.now());
     setCompletionTime(undefined);
     setTimerRunning(true);
+    setShowGiveUpConfirm(false);
   }, [challengeIndex, challenge.starterCode]);
 
   const runCode = useCallback(async () => {
@@ -111,6 +113,14 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
     setIsRunning(false);
   }, [code, challenge, onComplete]);
 
+  const handleGiveUp = () => {
+    setTimerRunning(false);
+    setOutput("CHALLENGE SKIPPED - NO TIME RECORDED");
+    setTimeout(() => {
+      onComplete();
+    }, 1000);
+  };
+
   return (
     <div>
       <div className="mb-4 flex justify-between items-center">
@@ -156,13 +166,22 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
           />
         </div>
 
-        <button
-          onClick={runCode}
-          disabled={isRunning}
-          className="mt-4 w-full py-3 border border-terminal-accent text-terminal-accent hover:bg-terminal-accent hover:text-terminal-bg transition-colors disabled:opacity-50"
-        >
-          {isRunning ? "EXECUTING..." : "RUN CODE [CTRL+ENTER]"}
-        </button>
+        <div className="flex gap-4 mt-4">
+          <button
+            onClick={runCode}
+            disabled={isRunning}
+            className="flex-1 py-3 border border-terminal-accent text-terminal-accent hover:bg-terminal-accent hover:text-terminal-bg transition-colors disabled:opacity-50"
+          >
+            {isRunning ? "EXECUTING..." : "RUN CODE [CTRL+ENTER]"}
+          </button>
+          <button
+            onClick={() => setShowGiveUpConfirm(true)}
+            disabled={isRunning}
+            className="px-6 py-3 border border-terminal-dim text-terminal-dim hover:border-terminal-accent hover:text-terminal-accent transition-colors disabled:opacity-50"
+          >
+            GIVE UP
+          </button>
+        </div>
       </div>
 
       <div>
@@ -195,6 +214,47 @@ export default function CodeEditor({ challengeIndex, onComplete }: CodeEditorPro
               </h2>
               <p className="text-terminal-dim mt-2">LOADING NEXT CHALLENGE...</p>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showGiveUpConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-terminal-bg/90 z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="bg-terminal-bg border-2 border-terminal-accent p-8 max-w-md"
+            >
+              <h2 className="text-2xl font-bold text-terminal-bright mb-4">
+                CONFIRM SURRENDER
+              </h2>
+              <p className="text-terminal-dim mb-6">
+                Are you sure you want to skip this challenge? Your time will not be recorded.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => {
+                    setShowGiveUpConfirm(false);
+                    handleGiveUp();
+                  }}
+                  className="flex-1 py-2 border border-terminal-accent text-terminal-accent hover:bg-terminal-accent hover:text-terminal-bg transition-colors"
+                >
+                  YES, SKIP
+                </button>
+                <button
+                  onClick={() => setShowGiveUpConfirm(false)}
+                  className="flex-1 py-2 border border-terminal-dim text-terminal-dim hover:border-terminal-bright hover:text-terminal-bright transition-colors"
+                >
+                  CANCEL
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
