@@ -1,9 +1,26 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { challenges } from '@/lib/challenges';
 
 export async function POST(request: Request) {
   try {
     const { challenge_index, completion_time } = await request.json();
+    
+    // Validate that challenge_index is valid
+    if (typeof challenge_index !== 'number' || challenge_index < 0 || challenge_index >= challenges.length) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Invalid challenge index' 
+      }, { status: 400 });
+    }
+    
+    // Validate that completion_time is not negative
+    if (completion_time < 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Completion time cannot be negative' 
+      }, { status: 400 });
+    }
     
     const { data, error } = await supabase
       .from('completion_times')
